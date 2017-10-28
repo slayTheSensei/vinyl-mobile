@@ -1,28 +1,35 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, Dimensions, ScrollView, StatusBar } from 'react-native';
 import axios from 'axios'
 
 // Component Imports
-import NavBar from './components/NavBar.js'
-import BrowseArtists from './components/BrowseArtists.js'
+import Vinyl from './components/Vinyl.js'
 
 export default class App extends React.Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      artists: [],
+    }
+  }
+
+    getArtists = () => {
+      let self = this
+    // GET Artists
+    axios.get('https://vinyl-backend-api.herokuapp.com/artists').then(response => {
+      this.setState({artists: response.data.artists})
+      console.log(response.data.artists)
+    }).catch(error => {
+      console.log('Error fetching and parsing data', error)
+    })
+    }
+
+    componentDidMount() {
+      this.getArtists()
+    }
+
   render() {
     return (
-      <View style={styles.container}>
-        <StatusBar barStyle="light-content" />
-        <NavBar />
-        <BrowseArtists />
-      </View>
+      <Vinyl artists={this.state.artists}/>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#101010',
-  },
-  status: {
-    color: '#fff'
-  }
-});
